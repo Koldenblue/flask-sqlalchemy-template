@@ -1,9 +1,11 @@
 import os
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, text, select
+# make sure that these variables don't conflict
+from sqlalchemy.orm import Session as alcSession
+from flask_session import Session
 from helpers import apology, login_required, lookup
 from datetime import datetime
-from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -53,10 +55,13 @@ def login():
         elif not request.form.get("password"):
             return apology("must provide password", 403)
 
-        with engine.connect() as conn:
+        with alcSession(engine) as conn:
             # Query database for username
-            rows = conn.execute(text("SELECT * FROM registrants WHERE username = :username"),
-                                [{ 'username': request.form.get("username") }] )
+            statement = text("SELECT * FROM registrants WHERE username = :username").bindparams(username= request.form.get("username"))
+            rows = conn.execute(statement)
+
+            # the cursor is forgotten the first time .all() is used, so set the variable to the rows.all() array
+            rows = rows.all()
 
             # Ensure username exists and password is correct
             if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
@@ -109,7 +114,7 @@ def register():
             with engine.connect() as conn:
                 rows = conn.execute(text("SELECT username FROM registrants"))
                 #make sure username doesn't already exist
-                for row in rows:
+                for row in rows.all():
                     if username == row['username']:
                         return apology("that username already exists", 403)
                 conn.execute(text("INSERT INTO registrants (username, hash) VALUES (:username, :hash)"),
