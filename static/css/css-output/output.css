@@ -1,0 +1,49 @@
+body {
+  background-color: darkgray;
+}
+
+main .form-control {
+  /* center form controls */
+  display: inline-block;
+  /* override Bootstrap's 100% width for form controls */
+  width: auto;
+}
+
+main {
+  /* scroll horizontally as needed */
+  overflow-x: auto;
+  /* center contents */
+  text-align: center;
+}
+
+main img {
+  /* constrain images on small screens */
+  max-width: 100%;
+}
+
+.navbar-collapse {
+  width: auto;
+}
+
+.jumbotron-fluid {
+  background-color: honeydew;
+  padding: 2rem 0 2rem 0;
+  border-radius: 10px;
+  margin: 1rem;
+}
+
+.login-form {
+  margin: 0.125rem;
+}
+
+.navbar {
+  background: #01a7be;
+  background: linear-gradient(0deg, #01a7be 25%, #014ebe 75%);
+  box-shadow: 0 1px 2px black;
+}
+
+.container {
+  padding: 2rem;
+}
+
+/*# sourceMappingURL=output.css.map */
